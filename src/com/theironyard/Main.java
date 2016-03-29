@@ -106,11 +106,7 @@ public class Main {
                         .map(rank ->
                                 Collections.frequency(ranks, rank))
                         .collect(Collectors.toCollection(HashSet<Integer>::new));
-        int sum = 0;
-        for (int freq : freqs) {
-            sum += freq;
-        }
-        return sum == 3;
+        return freqs.contains(2) && freqs.size() != 1;
     }
     static boolean isTwoPair(HashSet<Card> hand) {
         ArrayList<Card.Rank> ranks =
@@ -133,7 +129,7 @@ public class Main {
         HashSet<Card> deck = createDeck();
         HashSet<HashSet<Card>> hands = createHands(deck);
         hands = hands.stream()
-                .filter(Main::isTwoPair)
+                .filter(Main::isStraight)
                 .collect(Collectors.toCollection(HashSet<HashSet<Card>>::new));
         System.out.println(hands.size());
         long endTime = System.currentTimeMillis();
