@@ -18,7 +18,7 @@ public class MainTest {
     @Test
     public void testCreateHands() {
         HashSet<HashSet<Card>> hands = Main.createHands(Main.createDeck());
-        assertTrue(hands.size() == 270725);//value obtained by doing maths
+        assertTrue(hands.size() == 270725);//value obtained by looking up the maths
     }
     @Test
     public void testIsFlush() {
