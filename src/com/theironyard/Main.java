@@ -1,5 +1,7 @@
 package com.theironyard;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -52,12 +54,86 @@ public class Main {
         return suits.size() == 1;
     }
 
+    static boolean isStraight(HashSet<Card> hand) {
+        ArrayList<Card.Rank> ranks =
+                hand.stream()
+                .map(card -> {
+                    return card.rank;
+                })
+                .sorted().collect(Collectors.toCollection(ArrayList<Card.Rank>::new));
+        HashSet<Card.Rank> rankSet = new HashSet<>(ranks);
+        return 3 == ranks.get(3).ordinal() - ranks.get(0).ordinal() && rankSet.size() == 4;
+    }
+    static boolean isStraightFlush(HashSet<Card> hand) {
+        return isStraight(hand) && isFlush(hand);
+    }
+    static boolean isFourOfAKind(HashSet<Card> hand) {
+        HashSet<Card.Rank> ranks =
+                hand.stream()
+                        .map(card -> {
+                            return card.rank;
+                        })
+                        .collect(Collectors.toCollection(HashSet<Card.Rank>::new));
+        return ranks.size() == 1;
+    }
+    static boolean isThreeOfAKind(HashSet<Card> hand) {
+        ArrayList<Card.Rank> ranks =
+                hand.stream()
+                        .map(card -> {
+                            return card.rank;
+                        })
+                        .collect(Collectors.toCollection(ArrayList<Card.Rank>::new));
+        HashSet<Integer> freqs =
+                ranks.stream()
+                        .map(rank ->
+                                Collections.frequency(ranks, rank))
+                        .collect(Collectors.toCollection(HashSet<Integer>::new));
+        int sum = 0;
+        for (int freq : freqs) {
+            sum += freq;
+        }
+        return sum == 4 && freqs.size() != 1;
+    }
+    static boolean isTwoOfAKind(HashSet<Card> hand) {
+        ArrayList<Card.Rank> ranks =
+                hand.stream()
+                        .map(card -> {
+                            return card.rank;
+                        })
+                        .collect(Collectors.toCollection(ArrayList<Card.Rank>::new));
+        HashSet<Integer> freqs =
+                ranks.stream()
+                        .map(rank ->
+                                Collections.frequency(ranks, rank))
+                        .collect(Collectors.toCollection(HashSet<Integer>::new));
+        int sum = 0;
+        for (int freq : freqs) {
+            sum += freq;
+        }
+        return sum == 3;
+    }
+    static boolean isTwoPair(HashSet<Card> hand) {
+        ArrayList<Card.Rank> ranks =
+                hand.stream()
+                        .map(card -> {
+                            return card.rank;
+                        })
+                        .collect(Collectors.toCollection(ArrayList<Card.Rank>::new));
+        ArrayList<Integer> freqs =
+                ranks.stream()
+                        .map(rank ->
+                                Collections.frequency(ranks, rank))
+                        .collect(Collectors.toCollection(HashSet<Integer>::new))
+                        .stream()
+                        .collect(Collectors.toCollection(ArrayList<Integer>::new));
+        return  freqs.get(0) == 2 && freqs.size() == 1;
+    }
     public static void main(String[] args) {
         long beginTime = System.currentTimeMillis();
         HashSet<Card> deck = createDeck();
         HashSet<HashSet<Card>> hands = createHands(deck);
         hands = hands.stream()
-                .filter(Main::isFlush)
+                .filter(Main::isTwoPair)
                 .collect(Collectors.toCollection(HashSet<HashSet<Card>>::new));
         System.out.println(hands.size());
         long endTime = System.currentTimeMillis();
